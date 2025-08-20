@@ -1,9 +1,15 @@
 plugins {
-    id 'eclipse'
-    id 'idea'
-    id 'com.modrinth.minotaur' version '2.+'
-    id 'net.neoforged.gradle.userdev' version '7.0.+'
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.neoforged.moddev' version '1.0.21'
 }
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+version = mod_version
+group = mod_group_id
 
 repositories {
     maven {
@@ -23,43 +29,141 @@ repositories {
     }
     maven { url 'https://jitpack.io' }
     maven { url = 'https://maven.fabricmc.net' }
+    flatDir {
+        dir 'libs'
+    }
 }
-
-group= "team.creative" + project.mod_id
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-project.evaluationDependsOn(":LittleTiles")
+neoForge {
+    // Specify the version of NeoForge to use.
+    version = project.neo_version
 
-runs {  
-    configureEach {
-        workingDirectory project.file('run')
-        systemProperty 'forge.logging.console.level', 'debug'
-        
-        modSource project(":CreativeCore").sourceSets.main
-        modSource project.sourceSets.main
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
     }
-    
-    client {
+
+    runs {
+        client {
+            client()
+
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        server {
+            server()
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        gameTestServer {
+            type = "gameTestServer"
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        data {
+            data()
+
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+
+        // applies to all the run configs above
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
     }
-    
-    server {
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
     }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
 }
 
 dependencies {
-    implementation "net.neoforged:neoforge:${forge_version}"
-    
     implementation "com.github.WaterMediaTeam:watermedia:${watermedia_version}"
-    
-    implementation project(':CreativeCore')
-    implementation project(':LittleTiles')
-    
-    compileOnly "net.fabricmc:fabric-loader:${fabric_version}"
-    //compileOnly "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+
+    implementation "CreativeCore:CreativeCore1.21.1"
+    implementation "CreativeCore:LittleTiles1.21.1"
 }
 
-modDependencies = [
-    [ modId: "creativecore", type: "required", ordering: "NONE", side: "BOTH", versionRange: creativecore_version ],
-    [ modId: "watermedia", type: "required", ordering: "NONE", side: "CLIENT", versionRange: watermedia_version_range ]
-]
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
+}
+
+sourceSets.main.resources.srcDir generateModMetadata
+
+neoForge.ideSyncTask generateModMetadata
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/repo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+// IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
+tasks.register("runWithRenderDoc", Exec) {
+    def javaExecTask = tasks.withType(JavaExec).named("runClient").get()
+    def javaHome = javaExecTask.javaLauncher.get().metadata.installationPath.asFile.absolutePath
+
+    commandLine = [
+            "D:\\RenderDoc\\renderdoccmd.exe",
+            "capture",
+            "--opt-hook-children",
+            "--wait-for-exit",
+            "--working-dir",
+            ".",
+            "$javaHome/bin/java.exe",
+            "-Xmx64m",
+            "-Xms64m",
+            "-Dorg.gradle.appname=gradlew",
+            "-Dorg.gradle.java.home=$javaHome",
+            "-classpath",
+            "gradle/wrapper/gradle-wrapper.jar",
+            "org.gradle.wrapper.GradleWrapperMain",
+            "runClient"
+    ]
+}

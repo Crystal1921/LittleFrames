@@ -1,0 +1,65 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'com.modrinth.minotaur' version '2.+'
+    id 'net.neoforged.gradle.userdev' version '7.0.+'
+}
+
+repositories {
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    maven {
+        url "https://maven.su5ed.dev/releases"
+    }
+    maven {
+        url = "https://api.modrinth.com/maven"
+    }
+    maven {
+        url "https://maven.blamejared.com"
+    }
+    maven { url 'https://jitpack.io' }
+    maven { url = 'https://maven.fabricmc.net' }
+}
+
+group= "team.creative" + project.mod_id
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+project.evaluationDependsOn(":LittleTiles")
+
+runs {  
+    configureEach {
+        workingDirectory project.file('run')
+        systemProperty 'forge.logging.console.level', 'debug'
+        
+        modSource project(":CreativeCore").sourceSets.main
+        modSource project.sourceSets.main
+    }
+    
+    client {
+    }
+    
+    server {
+    }
+}
+
+dependencies {
+    implementation "net.neoforged:neoforge:${forge_version}"
+    
+    implementation "com.github.WaterMediaTeam:watermedia:${watermedia_version}"
+    
+    implementation project(':CreativeCore')
+    implementation project(':LittleTiles')
+    
+    compileOnly "net.fabricmc:fabric-loader:${fabric_version}"
+    //compileOnly "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+}
+
+modDependencies = [
+    [ modId: "creativecore", type: "required", ordering: "NONE", side: "BOTH", versionRange: creativecore_version ],
+    [ modId: "watermedia", type: "required", ordering: "NONE", side: "CLIENT", versionRange: watermedia_version_range ]
+]

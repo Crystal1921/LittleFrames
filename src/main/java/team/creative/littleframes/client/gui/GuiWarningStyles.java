@@ -1,13 +1,12 @@
 package team.creative.littleframes.client.gui;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import team.creative.creativecore.common.gui.style.display.DisplayColor;
 import team.creative.creativecore.common.gui.style.display.StyleDisplay;
 
-@Environment(EnvType.CLIENT)
+
 @OnlyIn(Dist.CLIENT)
 public class GuiWarningStyles {
     
