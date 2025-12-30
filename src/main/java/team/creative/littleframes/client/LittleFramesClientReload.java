@@ -41,12 +41,16 @@ public class LittleFramesClientReload {
             public final ModelProperty<Boolean> visibility = new ModelProperty<>();
             public final ModelData visible = ModelData.builder().with(visibility, true).build();
             public final ModelData invisible = ModelData.builder().with(visibility, false).build();
-            @Override public @NotNull ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ModelData modelData) {
+
+            @Override
+            public @NotNull ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ModelData modelData) {
                 BlockEntity be = level.getBlockEntity(pos);
                 if (be instanceof BECreativePictureFrame frame) return frame.visibleFrame ? visible : invisible;
                 return visible;
             }
-            @Override public List<? extends RenderBox> getBoxes(BlockState state, ModelData data, RandomSource source) {
+
+            @Override
+            public List<? extends RenderBox> getBoxes(BlockState state, ModelData data, RandomSource source) {
                 if (data.has(visibility) && !data.get(visibility)) return Collections.EMPTY_LIST;
                 return Collections.singletonList(new RenderBox(BlockCreativePictureFrame.box(state.getValue(BlockCreativePictureFrame.FACING)), Blocks.OAK_PLANKS));
             }
