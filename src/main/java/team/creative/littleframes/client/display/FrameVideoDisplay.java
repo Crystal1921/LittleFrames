@@ -138,6 +138,7 @@ public class FrameVideoDisplay extends FrameDisplay {
     }
     
     @Override
+    @SuppressWarnings("removal")
     public void prepare(LittleFrameData data, boolean playing) {
         if (player == null)
             return;

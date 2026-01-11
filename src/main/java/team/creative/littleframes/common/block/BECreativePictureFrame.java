@@ -23,6 +23,7 @@ import team.creative.creativecore.common.util.math.base.Facing;
 import team.creative.creativecore.common.util.math.box.AlignedBox;
 import team.creative.creativecore.common.util.math.vec.Vec2f;
 import team.creative.creativecore.common.util.math.vec.Vec3d;
+import team.creative.creativecore.common.util.math.vec.Vec3f;
 import team.creative.littleframes.LittleFrames;
 import team.creative.littleframes.LittleFramesRegistry;
 import team.creative.littleframes.client.display.FrameDisplay;
@@ -35,6 +36,8 @@ public class BECreativePictureFrame extends BlockEntityCreative {
     
     public Vec2f min = new Vec2f(0, 0);
     public Vec2f max = new Vec2f(1, 1);
+
+    public Vec3f offset = new Vec3f(0, 0, 0);
     
     public float rotation = 0;
     public boolean flipX = false;
@@ -189,6 +192,9 @@ public class BECreativePictureFrame extends BlockEntityCreative {
         nbt.putFloat("miny", min.y);
         nbt.putFloat("maxx", max.x);
         nbt.putFloat("maxy", max.y);
+        nbt.putFloat("offsetX", offset.x);
+        nbt.putFloat("offsetY", offset.y);
+        nbt.putFloat("offsetZ", offset.z);
         nbt.putFloat("rotation", rotation);
         nbt.putBoolean("visibleFrame", visibleFrame);
         nbt.putBoolean("bothSides", bothSides);
@@ -209,6 +215,10 @@ public class BECreativePictureFrame extends BlockEntityCreative {
         min.y = nbt.getFloat("miny");
         max.x = nbt.getFloat("maxx");
         max.y = nbt.getFloat("maxy");
+        float offsetX = nbt.getFloat("offsetX");
+        float offsetY = nbt.getFloat("offsetY");
+        float offsetZ = nbt.getFloat("offsetZ");
+        offset = new Vec3f(offsetX, offsetY, offsetZ);
         rotation = nbt.getFloat("rotation");
         visibleFrame = nbt.getBoolean("visibleFrame");
         bothSides = nbt.getBoolean("bothSides");

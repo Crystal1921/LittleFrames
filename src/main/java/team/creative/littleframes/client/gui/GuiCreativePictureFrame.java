@@ -31,6 +31,7 @@ import team.creative.creativecore.common.gui.control.simple.GuiTextfield;
 import team.creative.creativecore.common.gui.flow.GuiFlow;
 import team.creative.creativecore.common.gui.style.Icon;
 import team.creative.creativecore.common.gui.sync.GuiSyncLocal;
+import team.creative.creativecore.common.util.math.vec.Vec3f;
 import team.creative.creativecore.common.util.mc.ColorUtils;
 import team.creative.creativecore.common.util.text.TextBuilder;
 import team.creative.creativecore.common.util.text.TextMapBuilder;
@@ -95,6 +96,10 @@ public class GuiCreativePictureFrame extends GuiLayer {
             frame.data.volume(nbt.getFloat("volume"));
             frame.data.minDistance = nbt.getFloat("min");
             frame.data.maxDistance = nbt.getFloat("max");
+            float offsetX = nbt.getFloat("offsetX");
+            float offsetY = nbt.getFloat("offsetY");
+            float offsetZ = nbt.getFloat("offsetZ");
+            frame.offset = new Vec3f(offsetX, offsetY, offsetZ);
             frame.data.alpha = nbt.getFloat("transparency");
             frame.data.brightness = nbt.getFloat("brightness");
             frame.data.playbackSpeed = nbt.getDouble("speed");
@@ -121,6 +126,10 @@ public class GuiCreativePictureFrame extends GuiLayer {
             GuiTextfield url = get("url");
             GuiCounterDecimal sizeX = get("sizeX");
             GuiCounterDecimal sizeY = get("sizeY");
+
+            GuiCounterDecimal offsetX = get("offsetX");
+            GuiCounterDecimal offsetY = get("offsetY");
+            GuiCounterDecimal offsetZ = get("offsetZ");
             
             GuiStateButton<Integer> buttonPosX = get("posX");
             GuiStateButton<Integer> buttonPosY = get("posY");
@@ -155,6 +164,10 @@ public class GuiCreativePictureFrame extends GuiLayer {
             nbt.putBoolean("flipY", flipY.value);
             nbt.putBoolean("visibleFrame", visibleFrame.value);
             nbt.putBoolean("bothSides", bothSides.value);
+
+            nbt.putFloat("offsetX",  (float) offsetX.getValue());
+            nbt.putFloat("offsetY",  (float) offsetY.getValue());
+            nbt.putFloat("offsetZ",  (float) offsetZ.getValue());
             
             nbt.putInt("render", (int) renderDistance.getValue());
             
@@ -269,12 +282,15 @@ public class GuiCreativePictureFrame extends GuiLayer {
         GuiParent align = new GuiParent(GuiFlow.STACK_X);
         add(align);
         
-        align.add(new GuiStateButton<Integer>("posX", frame.min.x == 0 ? 0 : frame.max.x == 1 ? 2 : 1, new TextMapBuilder<Integer>().addComponent(0, Component.translatable(
-            "gui.creative_frame.posx.left")).addComponent(1, Component.translatable("gui.creative_frame.posx.center")).addComponent(2, Component.translatable(
+        align.add(new GuiStateButton<>("posX", frame.min.x == 0 ? 0 : frame.max.x == 1 ? 2 : 1, new TextMapBuilder<Integer>().addComponent(0, Component.translatable(
+                "gui.creative_frame.posx.left")).addComponent(1, Component.translatable("gui.creative_frame.posx.center")).addComponent(2, Component.translatable(
                 "gui.creative_frame.posx.right"))));
-        align.add(new GuiStateButton<Integer>("posY", frame.min.y == 0 ? 0 : frame.max.y == 1 ? 2 : 1, new TextMapBuilder<Integer>().addComponent(0, Component.translatable(
-            "gui.creative_frame.posy.top")).addComponent(1, Component.translatable("gui.creative_frame.posy.center")).addComponent(2, Component.translatable(
+        align.add(new GuiStateButton<>("posY", frame.min.y == 0 ? 0 : frame.max.y == 1 ? 2 : 1, new TextMapBuilder<Integer>().addComponent(0, Component.translatable(
+                "gui.creative_frame.posy.top")).addComponent(1, Component.translatable("gui.creative_frame.posy.center")).addComponent(2, Component.translatable(
                 "gui.creative_frame.posy.bottom"))));
+        align.add(new GuiCounterDecimal("offsetX", frame.offset.x, -10,10));
+        align.add(new GuiCounterDecimal("offsetY", frame.offset.y, -10,10));
+        align.add(new GuiCounterDecimal("offsetZ", frame.offset.z, -10,10));
         
         GuiTable table = new GuiTable();
         add(table);

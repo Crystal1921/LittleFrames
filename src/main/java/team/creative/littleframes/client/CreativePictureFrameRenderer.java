@@ -84,6 +84,8 @@ public class CreativePictureFrameRenderer implements BlockEntityRenderer<BECreat
         pose.translate(0.5, 0.5, 0.5);
         pose.mulPose(facing.rotation().rotation((float) Math.toRadians(-frame.rotation)));
         pose.translate(-0.5, -0.5, -0.5);
+
+        pose.translate(frame.offset.x, frame.offset.y, frame.offset.z);
         
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         Tesselator tesselator = Tesselator.getInstance();
