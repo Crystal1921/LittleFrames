@@ -3,6 +3,8 @@ package team.creative.littleframes.client.gui;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.font.TextFieldHelper;
 import org.watermedia.api.image.ImageAPI;
 import org.watermedia.api.image.ImageCache;
 
@@ -193,8 +195,24 @@ public class GuiCreativePictureFrame extends GuiLayer {
         align = Align.STRETCH;
         flow = GuiFlow.STACK_Y;
         
+        // 创建一个横向布局的父容器来放置URL输入框和复制按钮
+        GuiParent urlRow = new GuiParent(GuiFlow.STACK_X);
+        urlRow.align = Align.STRETCH;
+        add(urlRow);
+
+        // 添加URL输入框，让它占据剩余空间
         url = new GuiUrlTextfield(save, "url", frame.data.getURIPath());
-        add(url);
+        url.setExpandableX();
+        urlRow.add(url);
+
+        // 添加复制按钮
+        urlRow.add(new GuiButton("copyUrl", x -> {
+            String urlText = url.getText();
+            if (!urlText.isEmpty()) {
+                Minecraft mc = Minecraft.getInstance();
+                TextFieldHelper.setClipboardContents(mc, urlText);
+            }
+        }).setTranslate("gui.creative_frame.copy_url"));
         GuiLabel error = new GuiLabel("error").setDefaultColor(ColorUtils.RED);
         if (frame.isClient() && frame.cache != null) {
             if (frame.cache.getStatus().equals(ImageCache.Status.FAILED)) {

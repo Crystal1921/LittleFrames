@@ -22,6 +22,7 @@
     "gui.creative_frame.loop": "loop",
     "gui.creative_frame.reloadtooltip": "Hold shift to reload all",
     "gui.creative_frame.reload": "reload",
+    "gui.creative_frame.copy_url": "Copy URL",
      "gui.creative_frame.autoReload": "Auto Reload",
     "gui.little_frame.fitmode.CROP": "crop",
     "gui.little_frame.fitmode.STRETCH": "stretch",

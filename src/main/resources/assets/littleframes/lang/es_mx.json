@@ -21,6 +21,7 @@
     "gui.creative_frame.loop": "en bucle",
     "gui.creative_frame.reloadtooltip": "Presiona SHIFT + CLICK para recargar todos los cuadros",
     "gui.creative_frame.reload": "recargar",
+    "gui.creative_frame.copy_url": "copiar enlace",
     "gui.creative_frame.save": "guardar",
     "gui.frame_builder.width": "anchura:",
     "gui.frame_builder.height": "altura:",

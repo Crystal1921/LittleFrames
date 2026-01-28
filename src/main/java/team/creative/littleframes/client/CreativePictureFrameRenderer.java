@@ -42,7 +42,7 @@ public class CreativePictureFrameRenderer implements BlockEntityRenderer<BECreat
     
     @Override
     public AABB getRenderBoundingBox(BECreativePictureFrame frame) {
-        return frame.getBox().getBB(frame.getBlockPos());
+        return AABB.INFINITE;
     }
     
     @Override
@@ -107,5 +107,5 @@ public class CreativePictureFrameRenderer implements BlockEntityRenderer<BECreat
         RenderSystem.setShaderColor(1, 1, 1, 1);
         pose.popPose();
     }
-    
+
 }

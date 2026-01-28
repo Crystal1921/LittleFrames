@@ -21,6 +21,7 @@
     "gui.creative_frame.loop": "循环",
     "gui.creative_frame.reloadtooltip": "按住Shift键以重新加载全部",
     "gui.creative_frame.reload": "重新加载",
+    "gui.creative_frame.copy_url": "复制链接",
     "gui.creative_frame.save": "保存",
     "gui.frame_builder.width": "宽度:",
     "gui.frame_builder.height": "高度:",
